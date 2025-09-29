@@ -21,7 +21,6 @@ def return_arn():
     for policy in response["Policies"]:
         return(policy["Arn"], policy["DefaultVersionId"])
 
-
 def get_iam_policy(Arn, DefaultVersionId):
     response = IAM_CLIENT.get_policy_version(
     PolicyArn=Arn,
@@ -29,8 +28,6 @@ def get_iam_policy(Arn, DefaultVersionId):
 )
     
     return(json.dumps(response["PolicyVersion"]["Document"], default=str, indent=4))
-
-
 
 def main():
     Arn, DefaultVersionId = return_arn()
