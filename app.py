@@ -1,6 +1,7 @@
 import boto3
 import os
 import json
+from parliament import analyze_policy_string
 from dotenv import load_dotenv 
 
 load_dotenv()
@@ -18,7 +19,6 @@ def return_arn():
     )
 
     for policy in response["Policies"]:
-        #print(policy["Arn"])
         return(policy["Arn"], policy["DefaultVersionId"])
 
 
@@ -27,13 +27,18 @@ def get_iam_policy(Arn, DefaultVersionId):
     PolicyArn=Arn,
     VersionId=DefaultVersionId
 )
-    print(json.dumps(response, default=str, indent=4))
+    
+    return(json.dumps(response["PolicyVersion"]["Document"], default=str, indent=4))
 
 
 
 def main():
     Arn, DefaultVersionId = return_arn()
-    get_iam_policy(Arn, DefaultVersionId)
+    iam_policy = get_iam_policy(Arn, DefaultVersionId)
+    policy = analyze_policy_string(iam_policy)
+    for finding in policy.findings:
+        print(json.dumps(finding, indent=4, default=str))
+
                 
 main()
             
